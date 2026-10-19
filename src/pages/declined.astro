@@ -1,13 +1,39 @@
 ---
 import Base from '../layouts/Base.astro';
+
+// Server-rendered so it can show the coarse reason code from /api/submit.
+export const prerender = false;
+
+const reasons: Record<string, [string, string]> = {
+  short: ['The text was shorter than 20 characters.', '본문이 20자보다 짧았습니다.'],
+  prompt: ['A model answer was sent without its model name, settings, or full prompt.', '모델 답변인데 모델명·설정·프롬프트 전문이 비어 있었습니다.'],
+  rate: ['Too many submissions from one place in a short time. Wait ten minutes.', '같은 곳에서 짧은 시간에 여러 번 보냈습니다. 10분 뒤 다시 시도하세요.'],
+  size: ['The submission was over the size limit.', '제출 크기가 상한을 넘었습니다.'],
+  question: ['The question could not be identified.', '어느 질문에 대한 답인지 알 수 없었습니다.'],
+  reply: ['The letter being replied to could not be identified.', '답장 대상 편지를 알 수 없었습니다.'],
+  lang: ['The language code was not in a recognised form (e.g. en, ko, ja).', '언어 코드 형식이 맞지 않았습니다 (예: en, ko, ja).'],
+  origin: ['The form was not sent from this site.', '이 사이트에서 보낸 제출이 아니었습니다.'],
+  spam: ['The submission looked automated.', '자동 제출로 보였습니다.'],
+  full: ['The inbox is full and is waiting to be reviewed. Try again after the first of the month.', '접수함이 가득 차 검토를 기다리고 있습니다. 다음 달 1일 이후에 다시 시도하세요.'],
+  format: ['The request was not an ordinary form post.', '일반 폼 전송이 아니었습니다.'],
+  inbox: ['The inbox could not be reached. This is on our side; try again later.', '접수함에 닿지 못했습니다. 우리 쪽 문제이니 나중에 다시 시도하세요.'],
+};
+const code = Astro.url.searchParams.get('r') ?? '';
+const reason = reasons[code];
+Astro.response.headers.set('Cache-Control', 'no-store');
 ---
 <Base title="Not accepted">
   <h1>Not accepted</h1>
-  <p class="dim">
-    The submission could not be taken. The usual reasons: a model answer without its full prompt,
-    a field over its length limit, more than a few submissions from one place in a short time,
-    or the inbox being temporarily unavailable. Nothing was stored.
-  </p>
-  <p class="ko">제출을 받을 수 없었습니다. 흔한 이유는 프롬프트 없는 모델 답변, 길이 초과, 짧은 시간 내 반복 제출입니다. 아무것도 저장되지 않았습니다.</p>
-  <p class="dim"><a href="/submit">Try again</a></p>
+  {reason ? (
+    <>
+      <p>{reason[0]}</p>
+      <p class="ko">{reason[1]}</p>
+    </>
+  ) : (
+    <>
+      <p class="dim">The submission could not be taken.</p>
+      <p class="ko">제출을 받을 수 없었습니다.</p>
+    </>
+  )}
+  <p class="dim">Nothing was stored. <a href="/submit">Try again</a></p>
 </Base>

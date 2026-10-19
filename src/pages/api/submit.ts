@@ -55,10 +55,18 @@ function clean(s: string, max: number): string {
     .slice(0, max);
 }
 
+// Coarse, non-sensitive reason codes shown to the visitor on /declined.
+// The detailed reason stays in the server log.
+const CODES: Record<string, string> = {
+  'content-type': 'format', 'too large': 'size', 'inbox not configured': 'inbox',
+  honeypot: 'spam', rate: 'rate', 'body too short': 'short', 'bad question id': 'question',
+  'bad replies_to': 'reply', 'bad lang': 'lang', 'model answer without disclosure': 'prompt',
+  'inbox full': 'full',
+};
 function decline(reason: string) {
-  // The reason is logged server-side only; the visitor gets a generic page.
   console.warn('[submit] declined:', reason);
-  return new Response(null, { status: 303, headers: { Location: '/declined' } });
+  const code = CODES[reason] ?? (reason.startsWith('cross-site') ? 'origin' : 'inbox');
+  return new Response(null, { status: 303, headers: { Location: `/declined?r=${code}` } });
 }
 
 // YAML block scalar: safe for arbitrary text because every line is indented
@@ -90,8 +98,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const len = Number(request.headers.get('content-length') ?? 0);
   if (len > LIMITS.totalBytes) return decline('too large');
 
-  const token = import.meta.env.GITHUB_TOKEN as string | undefined;
-  const repo = import.meta.env.GITHUB_REPO as string | undefined; // "owner/name"
+  // Read at runtime from the function's environment; import.meta.env is only
+  // a build-time fallback and may be empty if the variables were added later.
+  const token = (process.env.GITHUB_TOKEN || import.meta.env.GITHUB_TOKEN) as string | undefined;
+  const repo = (process.env.GITHUB_REPO || import.meta.env.GITHUB_REPO) as string | undefined; // "owner/name"
   if (!token || !repo) return decline('inbox not configured');
 
   const form = await request.formData();

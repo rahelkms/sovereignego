@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
+import sitemap from '@astrojs/sitemap';
 
 // Static output for every page. The single exception is /api/submit,
 // which opts out with `export const prerender = false` and runs as a
@@ -8,6 +9,7 @@ export default defineConfig({
   site: 'https://sovereignego.com',
   output: 'static',
   adapter: vercel(),
+  integrations: [sitemap({ filter: (p) => !p.includes('/submitted') && !p.includes('/declined') })],
   trailingSlash: 'never',
   build: { inlineStylesheets: 'never' },
   // The same-site check for /api/submit is implemented in the route itself

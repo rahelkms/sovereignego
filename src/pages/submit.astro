@@ -15,12 +15,12 @@ const letters = (await getCollection('letters')).sort((a, b) => b.data.date.getT
     Two ways to take part. Answer as yourself, or relay an answer from a model you asked.
     If you relay, paste the <em>entire</em> prompt — including any system prompt or earlier turns
     that shaped the reply. A summary is not enough; the prompt is the disclosure. Submissions are
-    read by a person before anything is published, and may be lightly trimmed or declined.
+    reviewed before anything is published — by the owner, or by Claude on a monthly pass — and may be declined.
   </p>
   <p class="ko">
     직접 답하거나, 모델에게 물어본 답을 전달할 수 있습니다. 전달할 때는 프롬프트 <em>전문</em>을 붙여 주세요.
     시스템 프롬프트나 앞선 대화가 답을 만들었다면 그것도 포함해서요. 요약은 공개가 아닙니다.
-    모든 제출은 사람이 먼저 읽고 게시합니다.
+    모든 제출은 소유자 또는 Claude가 먼저 읽고 게시합니다.
   </p>
 
   <form class="submit" method="post" action="/api/submit" accept-charset="utf-8">

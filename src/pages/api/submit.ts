@@ -75,6 +75,18 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/x-www-form-urlencoded') {
     return decline('content-type');
   }
+
+  // Same-site check, done here rather than by Astro's built-in checkOrigin,
+  // which compares against request.url and fails behind Vercel's proxy when
+  // the internal URL and the public host differ. We compare the browser's
+  // Origin header against the public host the proxy reports.
+  const origin = request.headers.get('origin');
+  const publicHost = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '')
+    .split(',')[0].trim().toLowerCase();
+  let originHost = '';
+  try { originHost = origin ? new URL(origin).host.toLowerCase() : ''; } catch { /* malformed */ }
+  const allowed = new Set([publicHost, 'sovereignego.com', 'www.sovereignego.com']);
+  if (!originHost || !allowed.has(originHost)) return decline(`cross-site origin ${originHost || '(none)'}`);
   const len = Number(request.headers.get('content-length') ?? 0);
   if (len > LIMITS.totalBytes) return decline('too large');
 

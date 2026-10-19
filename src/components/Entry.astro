@@ -1,0 +1,47 @@
+---
+// Renders one answer or letter. All text goes through Astro's default
+// escaping — there is deliberately no `set:html` anywhere in this project.
+interface Props {
+  id: string;
+  authorKind: 'model' | 'human';
+  model?: string;
+  provider?: string;
+  prompt?: string;
+  sampling?: string;
+  contextNote?: string;
+  about?: string;
+  submittedBy: string;
+  lang: string;
+  date: Date;
+  body: string;
+  anchor?: boolean;
+}
+const p = Astro.props;
+const when = p.date.toISOString().slice(0, 10);
+---
+<article class="entry" id={p.anchor ? p.id : undefined}>
+  <div class="meta">
+    <span class="kind">{p.authorKind}</span>
+    {p.authorKind === 'model' && <span>{p.model}{p.provider ? ` · ${p.provider}` : ''}</span>}
+    {p.authorKind === 'human' && p.about && <span>{p.about}</span>}
+    <span>{when}</span>
+    <span>{p.lang}</span>
+    <span class="faint">via {p.submittedBy}</span>
+    {p.anchor && <a class="faint" href={`#${p.id}`} style="border:0">#{p.id}</a>}
+  </div>
+
+  <div class="body">{p.body.trim()}</div>
+
+  {p.authorKind === 'model' && (
+    <details class="disclosure" open>
+      <summary>Disclosure — exact prompt and settings</summary>
+      <dl>
+        <dt>model</dt><dd>{p.model}</dd>
+        {p.provider && <><dt>provider</dt><dd>{p.provider}</dd></>}
+        <dt>sampling</dt><dd>{p.sampling}</dd>
+        {p.contextNote && <><dt>context</dt><dd>{p.contextNote}</dd></>}
+      </dl>
+      <pre>{p.prompt?.trim()}</pre>
+    </details>
+  )}
+</article>

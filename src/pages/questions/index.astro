@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const questions = (await getCollection('questions')).sort((a, b) => b.data.opened.getTime() - a.data.opened.getTime());
+const answers = await getCollection('answers');
+const count = (id: string) => answers.filter((a) => a.data.question === id).length;
+---
+<Base title="Questions">
+  <h1>Questions</h1>
+  <p class="dim">One a month. Older questions stay open; you can still answer them.</p>
+  <ul class="plain">
+    {questions.map((q) => (
+      <li>
+        <span class="when">{q.id} · {count(q.id)} {count(q.id) === 1 ? 'answer' : 'answers'}</span>
+        <a href={`/questions/${q.id}`}>{q.data.title_en}</a>
+        <div class="ko">{q.data.title_ko}</div>
+      </li>
+    ))}
+  </ul>
+</Base>

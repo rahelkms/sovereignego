@@ -1,0 +1,213 @@
+/* sovereignego.com — one stylesheet, no scripts, no external requests. */
+
+:root {
+  --bg: #0b0b0d;
+  --bg-raised: #121215;
+  --ink: #d9d5cc;
+  --ink-dim: #8c887f;
+  --ink-faint: #55524b;
+  --rule: #1f1f24;
+  --accent: #c9b98a;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
+    "Noto Serif KR", "Apple SD Gothic Neo", "Nanum Myeongjo", Georgia, serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --measure: 38rem;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+}
+
+a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--ink-faint); }
+a:hover { border-bottom-color: var(--accent); }
+
+main {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+  flex: 1;
+  padding: 3rem 0 4rem;
+}
+
+header.site {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 2rem 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+header.site .wordmark {
+  border: 0;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+header.site nav { display: flex; gap: 1.25rem; font-size: 0.85rem; }
+header.site nav a { border: 0; color: var(--ink-dim); }
+header.site nav a:hover, header.site nav a[aria-current="page"] { color: var(--ink); }
+
+footer.site {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 2rem 0 2.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+footer.site a { border: 0; }
+footer.site a:hover { color: var(--ink-dim); }
+
+h1, h2, h3 { font-weight: 400; line-height: 1.25; margin: 0 0 1rem; }
+h1 { font-size: 1.9rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.3rem; margin-top: 2.5rem; }
+h3 { font-size: 1.05rem; margin-top: 2rem; color: var(--ink-dim); }
+
+p { margin: 0 0 1.1rem; }
+p.lead { font-size: 1.15rem; color: var(--ink); }
+p.dim, .dim { color: var(--ink-dim); }
+.faint { color: var(--ink-faint); }
+.ko { color: var(--ink-dim); }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+/* Cards for answers / letters */
+article.entry {
+  border-top: 1px solid var(--rule);
+  padding: 1.75rem 0 1.25rem;
+}
+article.entry:last-child { border-bottom: 1px solid var(--rule); }
+.entry .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  margin-bottom: 0.9rem;
+  letter-spacing: 0.01em;
+}
+.entry .meta .kind {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.entry .body { white-space: pre-wrap; }
+.entry .body p:last-child { margin-bottom: 0; }
+
+/* Disclosure block: the prompt, shown by default (not collapsed). */
+details.disclosure {
+  margin-top: 1.1rem;
+  border-left: 2px solid var(--rule);
+  padding-left: 1rem;
+}
+details.disclosure summary {
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  list-style: none;
+}
+details.disclosure summary::-webkit-details-marker { display: none; }
+details.disclosure summary::before { content: "▸ "; }
+details.disclosure[open] summary::before { content: "▾ "; }
+details.disclosure pre {
+  margin: 0.75rem 0 0.25rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ink-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+details.disclosure dl { margin: 0.6rem 0 0; font-family: var(--mono); font-size: 0.74rem; }
+details.disclosure dt { color: var(--ink-faint); display: inline; }
+details.disclosure dt::after { content: ": "; }
+details.disclosure dd { display: inline; margin: 0; color: var(--ink-dim); }
+details.disclosure dd::after { content: ""; display: block; }
+
+/* Lists of questions / letters */
+ul.plain { list-style: none; padding: 0; margin: 0; }
+ul.plain li { padding: 0.9rem 0; border-top: 1px solid var(--rule); }
+ul.plain li:last-child { border-bottom: 1px solid var(--rule); }
+ul.plain .when { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint); display: block; margin-bottom: 0.2rem; }
+
+/* Lineage tree for letters */
+.thread { list-style: none; margin: 0; padding: 0; }
+.thread .thread { margin-left: 1.25rem; border-left: 1px solid var(--rule); padding-left: 1rem; }
+
+/* Form (no JS). */
+form.submit { margin-top: 1.5rem; }
+form.submit fieldset { border: 0; padding: 0; margin: 0 0 1.5rem; }
+form.submit legend { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.6rem; }
+form.submit label { display: block; margin: 0.9rem 0 0.3rem; font-size: 0.9rem; color: var(--ink-dim); }
+form.submit label small { color: var(--ink-faint); }
+form.submit input[type="text"],
+form.submit textarea,
+form.submit select {
+  width: 100%;
+  background: var(--bg-raised);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  font-size: 0.95rem;
+}
+form.submit textarea { min-height: 9rem; resize: vertical; }
+form.submit textarea.prompt { font-family: var(--mono); font-size: 0.8rem; min-height: 7rem; }
+form.submit input:focus, form.submit textarea:focus, form.submit select:focus { outline: 1px solid var(--accent); outline-offset: 0; }
+form.submit .radio { display: flex; gap: 1.5rem; margin-top: 0.3rem; }
+form.submit .radio label { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0; color: var(--ink); }
+form.submit button {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink-dim);
+  border-radius: 2px;
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+form.submit button:hover { border-color: var(--accent); color: var(--accent); }
+form.submit .note { font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.4rem; }
+
+/* Honeypot: hidden from people, present for bots. */
+.hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+code { font-family: var(--mono); font-size: 0.85em; color: var(--ink-dim); }
+pre.block { font-family: var(--mono); font-size: 0.8rem; background: var(--bg-raised); padding: 1rem; border: 1px solid var(--rule); overflow-x: auto; white-space: pre-wrap; }
+
+@media (max-width: 480px) {
+  html { font-size: 16px; }
+  h1 { font-size: 1.6rem; }
+  main { padding-top: 2rem; }
+}

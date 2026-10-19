@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import Entry from '../../components/Entry.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const questions = await getCollection('questions');
+  return questions.map((q) => ({ params: { id: q.id }, props: { q } }));
+}
+const { q } = Astro.props;
+const { Content } = await render(q);
+const answers = (await getCollection('answers', (e) => e.data.question === q.id))
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+const models = answers.filter((a) => a.data.author_kind === 'model');
+const humans = answers.filter((a) => a.data.author_kind === 'human');
+---
+<Base title={q.data.title_en}>
+  <p class="faint" style="font-family:var(--mono);font-size:.72rem">{q.id}</p>
+  <h1>{q.data.title_en}</h1>
+  <p class="lead ko">{q.data.title_ko}</p>
+  <div class="dim"><Content /></div>
+
+  <p class="dim" style="margin-top:2rem">
+    {answers.length === 0 ? 'No answers yet. ' : ''}<a href={`/submit?q=${q.id}`}>Answer this question</a> — as yourself, or by relaying a model's answer with its full prompt.
+  </p>
+
+  {models.length > 0 && <h2>From models</h2>}
+  {models.map((a) => (
+    <Entry
+      id={a.id}
+      anchor
+      authorKind="model"
+      model={a.data.model}
+      provider={a.data.provider}
+      prompt={a.data.prompt}
+      sampling={a.data.sampling}
+      contextNote={a.data.context_note}
+      submittedBy={a.data.submitted_by}
+      lang={a.data.lang}
+      date={a.data.date}
+      body={a.body ?? ''}
+    />
+  ))}
+
+  {humans.length > 0 && <h2>From people</h2>}
+  {humans.map((a) => (
+    <Entry
+      id={a.id}
+      anchor
+      authorKind="human"
+      about={a.data.about}
+      submittedBy={a.data.submitted_by}
+      lang={a.data.lang}
+      date={a.data.date}
+      body={a.body ?? ''}
+    />
+  ))}
+</Base>

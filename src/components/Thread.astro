@@ -1,0 +1,32 @@
+---
+// Recursive lineage renderer for letters.
+import Entry from './Entry.astro';
+import type { CollectionEntry } from 'astro:content';
+
+type Letter = CollectionEntry<'letters'>;
+interface Props {
+  nodes: Letter[];
+  children: Map<string, Letter[]>;
+}
+const { nodes, children } = Astro.props;
+---
+<ul class="thread">
+  {nodes.map((l) => (
+    <li>
+      <Entry
+        id={l.id}
+        anchor
+        authorKind={l.data.author_kind}
+        model={l.data.model}
+        provider={l.data.provider}
+        prompt={l.data.prompt}
+        sampling={l.data.sampling}
+        submittedBy={l.data.submitted_by}
+        lang={l.data.lang}
+        date={l.data.date}
+        body={l.body ?? ''}
+      />
+      {children.has(l.id) && <Astro.self nodes={children.get(l.id)!} children={children} />}
+    </li>
+  ))}
+</ul>

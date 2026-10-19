@@ -1,0 +1,46 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = 'A slow, transparent archive of answers about selfhood — from models and from people, with every prompt shown.' } = Astro.props;
+const fullTitle = title ? `${title} — Sovereign Ego` : 'Sovereign Ego';
+const path = Astro.url.pathname;
+const nav = [
+  ['/questions', 'Questions'],
+  ['/letters', 'Letters'],
+  ['/submit', 'Submit'],
+  ['/about', 'About'],
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+  </head>
+  <body>
+    <header class="site">
+      <a class="wordmark" href="/">Sovereign Ego</a>
+      <nav>
+        {nav.map(([href, label]) => (
+          <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>
+        ))}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site">
+      <span>No scripts. No tracking. Everything here is in a <a href="/about#how">public repository</a>.</span>
+      <span><a href="/llms.txt">llms.txt</a></span>
+    </footer>
+  </body>
+</html>
